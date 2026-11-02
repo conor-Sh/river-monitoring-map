@@ -70,6 +70,9 @@ def main():
         raise SystemExit("No readings returned. Check the area or units.")
     readings = pd.concat(non_empty).dropna(subset=["value"])
 
+    OUT.mkdir(parents=True, exist_ok=True)
+    readings.to_csv(OUT / "readings.csv", index=False)   # raw snapshot for plot.py
+
     # most recent reading per station
     latest = (readings.sort_values("dateTime")
               .groupby("stationReference").tail(1)
@@ -96,4 +99,8 @@ def main():
     ).to_crs(4326)
 
     OUT.mkdir(parents=True, exist_ok=True)
-    gdf.to_file(OUT / "stations.geojson", driver="GeoJSON")   #
+    gdf.to_file(OUT / "stations.geojson", driver="GeoJSON")
+
+
+if __name__ == "__main__":
+    main()
